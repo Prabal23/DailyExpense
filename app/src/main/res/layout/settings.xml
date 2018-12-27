@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff"
+    android:orientation="vertical"
+    tools:context=".Settings">
+
+    <LinearLayout
+        android:id="@+id/line"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="10dp"
+        android:weightSum="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center|start"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/back"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:text="@string/back"
+                android:textColor="#555b65"
+                android:textSize="20dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center|start"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="0dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="সহজ "
+                        android:textColor="#606060"
+                        android:textSize="16dp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="হিসাব"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textSize="16dp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="0dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="সেটিংস"
+                        android:textColor="#606060"
+                        android:textSize="12dp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/member_icon" />
+
+        <TextView
+            android:id="@+id/menu"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:text="@string/settings"
+            android:textColor="#555b65"
+            android:textSize="20dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/llReminder"
+        style="@style/settings_item_layout"
+        android:layout_below="@+id/line">
+
+        <TextView
+            android:id="@+id/tv_reminder_header"
+            style="@style/settings_header"
+            android:text="সেটিংস"
+            android:textColor="@color/colorPrimaryDark"
+            android:visibility="gone" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="0dp">
+
+            <TextView
+                android:id="@+id/tv_reminder_label"
+                style="@style/settings_sub_header"
+                android:text="নোটিফিকেশন" />
+
+            <android.support.v7.widget.SwitchCompat
+                android:id="@+id/timerSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:checked="false"
+                android:gravity="center_vertical" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/tv_reminder_desc"
+            style="@style/settings_details"
+            android:paddingTop="@dimen/items_top_padding"
+            android:paddingBottom="@dimen/items_inbetween_space"
+            android:text="এর মাধ্যমে দেনাপাওনা সম্পর্কিত নোটিফিকেশন প্রেরণ করা হবে" />
+
+        <LinearLayout
+            android:id="@+id/ll_set_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/items_inbetween_space">
+
+                <TextView
+                    android:id="@+id/tv_reminder_time_label"
+                    style="@style/settings_sub_header"
+                    android:text="নোটিফিকেশনের সময় ঠিক করুন" />
+
+                <ImageView
+                    android:id="@+id/iv_timer"
+                    android:layout_width="@dimen/timer_icon"
+                    android:layout_height="@dimen/timer_icon"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_timer" />
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/tv_reminder_time_desc"
+                style="@style/settings_details"
+                android:paddingTop="@dimen/items_top_padding"
+                android:paddingBottom="@dimen/items_inbetween_space"
+                android:text="@string/sett_reminder_time_content" />
+
+            <TextView
+                style="@style/settings_details"
+                android:paddingTop="@dimen/items_top_padding"
+                android:paddingBottom="@dimen/items_inbetween_space"
+                android:text="** আপনি প্রতিদিন এই সময়ে একটি নোটিফিকেশন পাবেন"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/vv"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_below="@+id/llReminder"
+        android:background="@color/textColorSecondary" />
+
+    <LinearLayout
+        android:id="@+id/l1"
+        style="@style/settings_item_layout"
+        android:layout_below="@+id/vv"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tv_agree_header"
+            style="@style/settings_header"
+            android:paddingBottom="@dimen/items_inbetween_space"
+            android:text="অন্যান্য"
+            android:textColor="@color/colorPrimaryDark" />
+
+        <LinearLayout
+            android:id="@+id/ll_terms"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/items_inbetween_space"
+            android:paddingBottom="@dimen/items_inbetween_space">
+
+            <TextView
+                android:id="@+id/tv_agree_terms_label"
+                style="@style/settings_sub_header"
+                android:text="টার্মস এবং কন্ডিশনস" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_privacy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/items_inbetween_space"
+            android:paddingBottom="@dimen/items_inbetween_space">
+
+            <TextView
+                android:id="@+id/tv_agree_privacy_label"
+                style="@style/settings_sub_header"
+                android:text="প্রাইভেসি পলিসি" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/l2"
+        style="@style/settings_item_layout"
+        android:layout_below="@+id/l1">
+
+        <TextView
+            style="@style/settings_header"
+            android:text="ভার্শন"
+            android:textColor="@color/colorPrimaryDark" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/items_inbetween_space">
+
+            <TextView
+                style="@style/settings_sub_header"
+                android:text="১.১২.১৮" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/settings_item_layout"
+        android:layout_below="@+id/l2">
+
+        <TextView
+            style="@style/settings_header"
+            android:text="ডেভোলাপার"
+            android:textColor="@color/colorPrimaryDark" />
+
+        <LinearLayout
+            android:id="@+id/l2_dev"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/items_inbetween_space"
+            android:paddingBottom="@dimen/items_inbetween_space">
+
+            <TextView
+                android:id="@+id/dev"
+                style="@style/settings_sub_header"
+                android:text="আইটিল্যাব সলিউশন্স লি." />
+
+            <TextView
+                style="@style/settings_sub_header"
+                android:text="১৫৯ অনাবিল, ধোপাদীঘিরপার, সিলেট।"
+                android:textColor="#5e5e5e"
+                android:textSize="12dp" />
+
+            <TextView
+                style="@style/settings_sub_header"
+                android:text="ফোন : +৮৮ ০১৮৪২ ৪৮৫ ২২২"
+                android:textColor="#5e5e5e"
+                android:textSize="12dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>

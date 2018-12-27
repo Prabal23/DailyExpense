@@ -1,0 +1,15 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.sohojhisab.MainActivity">
+    <item
+        android:id="@+id/profile"
+        android:icon="@drawable/user1_copy1"
+        android:title="প্রোফাইল"  />
+
+    <item
+        android:id="@+id/logout"
+        android:icon="@drawable/log_out_copy1"
+        android:title="লগ আউট" />
+
+</menu>

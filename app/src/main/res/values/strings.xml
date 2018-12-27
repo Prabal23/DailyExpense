@@ -1,0 +1,49 @@
+<resources>
+    <string name="app_name">Daily Expense</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="sett_reminder_header">Set Reminder</string>
+    <string name="sett_reminder_label">Remind Me</string>
+    <string name="sett_reminder_desc">We will remind you to make entiries of your expense</string>
+    <string name="sett_reminder_time_label">Set Reminder Time</string>
+    <string name="sett_reminder_time_content">8 : 00 PM</string>
+
+    <string name="menu">&#xf0c9;</string>
+    <string name="ok">&#xf00c;</string>
+    <string name="notok">&#xf00d;</string>
+    <string name="money">&#xf0d6;</string>
+    <string name="plus">&#xf067;</string>
+    <string name="convert_money">&#xf3d1;</string>
+    <string name="bell">&#xf0f3;</string>
+    <string name="not_bell">&#xf1f6;</string>
+    <string name="calculator">&#xf1ec;</string>
+    <string name="send">&#xf1d8;</string>
+    <string name="user">&#xf007;</string>
+    <string name="name">&#xf2bd;</string>
+    <string name="pass">&#xf13e;</string>
+    <string name="pass1">&#xf023;</string>
+    <string name="email">&#xf0e0;</string>
+    <string name="phone">&#xf095;</string>
+    <string name="eye">&#xf06e;</string>
+    <string name="eyenot">&#xf070;</string>
+    <string name="in">&#xf13e;</string>
+    <string name="right">&#xf061;</string>
+    <string name="calendar">&#xf073;</string>
+    <string name="info">&#xf05a;</string>
+    <string name="edit">&#xf044;</string>
+    <string name="del">&#xf1f8;</string>
+    <string name="back">&#xf053;</string>
+    <string name="gallery">&#xf03e;</string>
+    <string name="camera">&#xf030;</string>
+    <string name="clipboard">&#xf0c5;</string>
+    <string name="paste">&#xf0ea;</string>
+    <string name="reset">&#xf01e;</string>
+    <string name="inout">&#xf53d;</string>
+    <string name="list">&#xf0ca;</string>
+    <string name="add">&#xf0fe;</string>
+    <string name="minus">&#xf146;</string>
+    <string name="category">&#xf160;</string>
+    <string name="cross">&#xf057;</string>
+    <string name="search">&#xf002;</string>
+    <string name="settings">&#xf013;</string>
+</resources>

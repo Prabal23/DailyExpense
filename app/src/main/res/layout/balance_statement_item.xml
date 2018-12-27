@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/item_back"
+    android:gravity="center|start|top"
+    android:orientation="horizontal"
+    android:weightSum="1">
+
+    <View
+        android:id="@+id/v"
+        android:layout_width="10px"
+        android:layout_height="25dp"
+        android:background="#f11b30" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="0dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="5dp"
+        android:weightSum="4">
+
+        <TextView
+            android:id="@+id/date"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="তারিখ"
+            android:textColor="#535353"
+            android:textSize="13dp" />
+
+        <TextView
+            android:id="@+id/inc"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="আয়"
+            android:textColor="#535353"
+            android:textSize="13dp" />
+
+        <TextView
+            android:id="@+id/exp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="ব্যয়"
+            android:textColor="#535353"
+            android:textSize="13dp" />
+
+        <TextView
+            android:id="@+id/bal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="মোট"
+            android:textColor="#535353"
+            android:textSize="13dp" />
+
+    </LinearLayout>
+</LinearLayout>
