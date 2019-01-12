@@ -126,7 +126,7 @@ public class TransactionDetails extends AppCompatActivity {
         });
 
         Uri uris = null;
-        uris = Uri.parse("android.resource://com.dailyexpense/drawable/no_image");
+        uris = Uri.parse("android.resource://com.sohojhisab/drawable/no_image");
         if (uris != null) {
             bitmap = decodeUri(uris, 100);
         }
@@ -358,7 +358,7 @@ public class TransactionDetails extends AppCompatActivity {
         cross.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Uri uri = Uri.parse("android.resource://com.dailyexpense/drawable/no_image");
+                Uri uri = Uri.parse("android.resource://com.sohojhisab/drawable/no_image");
                 if (uri != null) {
                     bitmap = decodeUri(uri, 100);
                     memo_pic.setImageBitmap(bitmap);

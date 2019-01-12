@@ -78,7 +78,7 @@ public class AllBorrowFragment extends Fragment {
         final ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
 
         Uri uris = null;
-        uris = Uri.parse("android.resource://com.dailyexpense/drawable/no_image");
+        uris = Uri.parse("android.resource://com.sohojhisab/drawable/no_image");
         if (uris != null) {
             bitmap = decodeUri(uris, 100);
         }
@@ -191,7 +191,7 @@ public class AllBorrowFragment extends Fragment {
                 src.setHintTextColor(Color.parseColor("#9e9e9e"));
                 des.setText("");
                 des.setHintTextColor(Color.parseColor("#9e9e9e"));
-                Uri uri = Uri.parse("android.resource://com.dailyexpense/drawable/no_image");
+                Uri uri = Uri.parse("android.resource://com.sohojhisab/drawable/no_image");
                 if (uri != null) {
                     bitmap = decodeUri(uri, 100);
                     memo_pic.setImageBitmap(bitmap);
@@ -205,7 +205,7 @@ public class AllBorrowFragment extends Fragment {
         cross.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Uri uri = Uri.parse("android.resource://com.dailyexpense/drawable/no_image");
+                Uri uri = Uri.parse("android.resource://com.sohojhisab/drawable/no_image");
                 if (uri != null) {
                     bitmap = decodeUri(uri, 100);
                     memo_pic.setImageBitmap(bitmap);
@@ -329,7 +329,7 @@ public class AllBorrowFragment extends Fragment {
             src.setHintTextColor(Color.parseColor("#9e9e9e"));
             des.setText("");
             des.setHintTextColor(Color.parseColor("#9e9e9e"));
-            Uri uri = Uri.parse("android.resource://com.dailyexpense/drawable/no_image");
+            Uri uri = Uri.parse("android.resource://com.sohojhisab/drawable/no_image");
             if (uri != null) {
                 bitmap = decodeUri(uri, 100);
                 memo_pic.setImageBitmap(bitmap);

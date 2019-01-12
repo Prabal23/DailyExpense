@@ -408,7 +408,10 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
             add2.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(MainActivity.this, "Add your income first!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "প্রথমে আয় যোগ করুন" +
+                            "" +
+                            "" +
+                            "!", Toast.LENGTH_SHORT).show();
                 }
             });
         } else {

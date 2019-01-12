@@ -8,17 +8,22 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.view.menu.MenuPopupHelper;
 import android.support.v7.widget.SwitchCompat;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -30,9 +35,23 @@ import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
+import java.sql.Blob;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
 
@@ -41,7 +60,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class Settings extends AppCompatActivity {
     Typeface fontAwesomeFont;
     TextView menu, back;
-    String TAG = "RemindMe", tt_not = "", res = "", fname = "", uname = "", password = "";
+    String TAG = "RemindMe", tt_not = "", res = "", fname = "", uname = "", password = "", impo = "";
+    String dd = "", incinc = "", expexp = "", balbal = "";
+    int ii = 0, ee = 0, bb = 0;
     LocalData localData;
     SwitchCompat reminderSwitch;
     TextView tvTime;
@@ -50,8 +71,12 @@ public class Settings extends AppCompatActivity {
     ClipboardManager myClipboard;
     CircleImageView dp;
     private DatabaseHandlerUser dbUser;
+    private DatabaseHandler1 dbState;
     private DatabaseHandler db;
     private Contact dataModel, dataModelUser, dataModel7, dataModel8;
+    final String DATABASE_NAME = "daily_balance";
+    String rest = "0000-00-00,0,0,0";
+    private byte[] photo, photo1, photo2;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -59,6 +84,7 @@ public class Settings extends AppCompatActivity {
         setContentView(R.layout.settings);
 
         db = new DatabaseHandler(this);
+        dbState = new DatabaseHandler1(this);
         dbUser = new DatabaseHandlerUser(this);
 
         SharedPreferences sharedPreferences = getSharedPreferences("shared_login", Context.MODE_PRIVATE);
@@ -67,6 +93,34 @@ public class Settings extends AppCompatActivity {
         } else {
             res = "//";
         }
+
+        SharedPreferences sharedPreferences1 = getSharedPreferences("imported_data", Context.MODE_PRIVATE);
+        if (sharedPreferences1.contains("data")) {
+            impo = (sharedPreferences1).getString("data", "");
+            //Toast.makeText(this, imp, Toast.LENGTH_SHORT).show();
+        } else {
+            impo = "";
+        }
+
+        SharedPreferences sharedPreferences2 = getSharedPreferences("shared_pref", Context.MODE_PRIVATE);
+
+        if (sharedPreferences2.contains("balance")) {
+            rest = (sharedPreferences2).getString("balance", "");
+        }
+        if (!sharedPreferences2.contains("balance")) {
+            rest = "0000-00-00,0,0,0";
+        }
+        if (rest.equals("")) {
+            rest = "0000-00-00,0,0,0";
+        }
+        String[] results = rest.split(",");
+        dd = results[0];
+        incinc = results[1];
+        ii = Integer.parseInt(incinc);
+        expexp = results[2];
+        ee = Integer.parseInt(expexp);
+        balbal = results[3];
+        bb = Integer.parseInt(balbal);
 
         String[] result = res.split("/");
         fname = result[0];
@@ -234,6 +288,405 @@ public class Settings extends AppCompatActivity {
             dp.setImageBitmap(bitmap);
         }
 
+        final DatabaseHandler dbhelper = new DatabaseHandler(getApplicationContext());
+
+        TextView backup = (TextView) findViewById(R.id.backup);
+        backup.setOnClickListener(new View.OnClickListener() {
+            SQLiteDatabase sqldb = dbhelper.getReadableDatabase(); //My Database class
+            Cursor c = null;
+
+            @Override
+            public void onClick(View view) {
+                // Income Expense
+                DatabaseHandler dbhelper = new DatabaseHandler(getApplicationContext());
+                File exportDir = new File(Environment.getExternalStorageDirectory(), "");
+                if (!exportDir.exists()) {
+                    exportDir.mkdirs();
+                }
+
+                File file = new File(exportDir, "AllBalance.csv");
+                try {
+                    file.createNewFile();
+                    CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
+                    SQLiteDatabase db = dbhelper.getReadableDatabase();
+                    Cursor curCSV = db.rawQuery("SELECT  * FROM income_expense WHERE status=1 OR status=2", null);
+                    csvWrite.writeNext(curCSV.getColumnNames());
+                    while (curCSV.moveToNext()) {
+                        byte[] image = curCSV.getBlob(6);
+                        Bitmap bm = BitmapFactory.decodeByteArray(image, 0, image.length);
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        bm.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                        byte[] b = baos.toByteArray();
+                        String s = Base64.encodeToString(b, Base64.DEFAULT);
+                        //String s = new String(image);
+                        //Which column you want to exprort
+                        String arrStr[] = {curCSV.getString(0), curCSV.getString(1), curCSV.getString(2), curCSV.getString(3), curCSV.getString(4), curCSV.getString(5), s};
+                        csvWrite.writeNext(arrStr);
+                        //Toast.makeText(Settings.this, "সকল আয়ব্যায়ের ব্যাকআপ নেয়া হয়েছে", Toast.LENGTH_SHORT).show();
+                    }
+                    csvWrite.close();
+                    curCSV.close();
+                } catch (Exception sqlEx) {
+                    Log.e("Settings", sqlEx.getMessage(), sqlEx);
+                }
+
+
+                // Borrow Due
+                DatabaseHandler dbhelper1 = new DatabaseHandler(getApplicationContext());
+                File exportDir1 = new File(Environment.getExternalStorageDirectory(), "");
+                if (!exportDir1.exists()) {
+                    exportDir1.mkdirs();
+                }
+
+                File file1 = new File(exportDir1, "AllDueBalance.csv");
+                try {
+                    file1.createNewFile();
+                    CSVWriter csvWrite1 = new CSVWriter(new FileWriter(file1));
+                    SQLiteDatabase db1 = dbhelper1.getReadableDatabase();
+                    Cursor curCSV1 = db1.rawQuery("SELECT  * FROM income_expense WHERE status=3 OR status=4 OR status=33 OR status=44", null);
+                    csvWrite1.writeNext(curCSV1.getColumnNames());
+                    while (curCSV1.moveToNext()) {
+                        byte[] image = curCSV1.getBlob(6);
+                        Bitmap bm = BitmapFactory.decodeByteArray(image, 0, image.length);
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        bm.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                        byte[] b = baos.toByteArray();
+                        String s = Base64.encodeToString(b, Base64.DEFAULT);
+                        //String s = new String(image);
+                        //Which column you want to exprort
+                        String arrStr[] = {curCSV1.getString(0), curCSV1.getString(1), curCSV1.getString(2), curCSV1.getString(3), curCSV1.getString(4), curCSV1.getString(5), s};
+                        csvWrite1.writeNext(arrStr);
+                        //Toast.makeText(Settings.this, "সকল পাওনাদেনার ব্যাকআপ নেয়া হয়েছে", Toast.LENGTH_SHORT).show();
+                    }
+                    csvWrite1.close();
+                    curCSV1.close();
+                } catch (Exception sqlEx) {
+                    Log.e("Settings", sqlEx.getMessage(), sqlEx);
+                }
+
+
+                // All User Account
+                DatabaseHandlerUser dbhelper2 = new DatabaseHandlerUser(getApplicationContext());
+                File exportDir2 = new File(Environment.getExternalStorageDirectory(), "");
+                if (!exportDir2.exists()) {
+                    exportDir2.mkdirs();
+                }
+
+                File file2 = new File(exportDir2, "AllUser.csv");
+                try {
+                    file2.createNewFile();
+                    CSVWriter csvWrite2 = new CSVWriter(new FileWriter(file2));
+                    SQLiteDatabase db2 = dbhelper2.getReadableDatabase();
+                    Cursor curCSV2 = db2.rawQuery("SELECT  * FROM user_list", null);
+                    csvWrite2.writeNext(curCSV2.getColumnNames());
+                    while (curCSV2.moveToNext()) {
+                        byte[] image = curCSV2.getBlob(6);
+                        Bitmap bm = BitmapFactory.decodeByteArray(image, 0, image.length);
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        bm.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                        byte[] b = baos.toByteArray();
+                        String s = Base64.encodeToString(b, Base64.DEFAULT);
+                        //String s = new String(image);
+                        //Which column you want to exprort
+                        String arrStr[] = {curCSV2.getString(0), curCSV2.getString(1), curCSV2.getString(2), curCSV2.getString(3), curCSV2.getString(4), curCSV2.getString(5), s};
+                        csvWrite2.writeNext(arrStr);
+                        //Toast.makeText(Settings.this, "ব্যবহারকারির একাউন্টের ব্যাকআপ নেয়া হয়েছে", Toast.LENGTH_SHORT).show();
+                    }
+                    csvWrite2.close();
+                    curCSV2.close();
+                } catch (Exception sqlEx) {
+                    Log.e("Settings", sqlEx.getMessage(), sqlEx);
+                }
+
+                File file3 = new File(exportDir2, "AllStatement.csv");
+                try {
+                    file3.createNewFile();
+                    CSVWriter csvWrite2 = new CSVWriter(new FileWriter(file3));
+                    String arrStr[] = {dd, incinc, expexp, balbal};
+                    csvWrite2.writeNext(arrStr);
+                    csvWrite2.close();
+                    Toast.makeText(Settings.this, "সমস্তকিছুর ব্যাকআপ নেয়া সম্পন্ন হয়েছে", Toast.LENGTH_LONG).show();
+                } catch (Exception sqlEx) {
+                    Log.e("Settings", sqlEx.getMessage(), sqlEx);
+                }
+            }
+        });
+
+        TextView imp = (TextView) findViewById(R.id.imp);
+        imp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //All Balance Import
+                File dir = Environment.getExternalStorageDirectory();
+
+                //Toast.makeText(Settings.this, "Balance", Toast.LENGTH_SHORT).show();
+                File filename = new File(dir, "AllBalance.csv");
+                String path = dir.getAbsolutePath() + "/AllBalance.csv";
+                CSVReader csvReader = null;
+                try {
+                    csvReader = new CSVReader(new FileReader(path));
+                    String[] row = null;
+                    int iteration = 0;
+                    while ((row = csvReader.readNext()) != null) {
+                        if (iteration == 0) {
+                            iteration++;
+                            continue;
+                        }
+                        /*Toast.makeText(Settings.this, row[0]
+                                + "," + row[1]
+                                + "," + row[2]
+                                + "," + row[3]
+                                + "," + row[4]
+                                + "," + row[5]
+                                + "," + row[6], Toast.LENGTH_LONG).show();*/
+                        String st = row[5];
+                        String amt = row[2];
+                        int aa = Integer.parseInt(amt);
+                        String img = row[6];
+                        byte[] encodeByte = Base64.decode(img, Base64.DEFAULT);
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                        photo = baos.toByteArray();
+                        //photo = img.getBytes();
+                            /*Uri uri = Uri.parse(img);
+                            if (uri != null) {
+                                bitmap = decodeUri(uri, 100);
+                            }
+                            InputStream iStream =   getContentResolver().openInputStream(uri);
+                            photo = getBytes(iStream);*/
+                        if (st.equals("1")) {
+                            int itotal = ii + aa;
+                            int btotal = itotal - ee;
+                            //Toast.makeText(this, "" + itotal + " " + ee + " " + btotal, Toast.LENGTH_SHORT).show();
+
+                            String it = String.valueOf(itotal);
+                            String bt = String.valueOf(btotal);
+                            String et = String.valueOf(ee);
+                            dbState.addBalance(new Balance(row[1], amt, "0", bt));
+                            SharedPreferences sharedPreferences = getSharedPreferences("shared_pref", Context.MODE_PRIVATE);
+
+                            //Creating editor to store values to shared preferences
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+
+                            //Adding values to editor
+                            editor.putBoolean("mybalance", true);
+                            editor.putString("balance", row[1] + "," + itotal + "," + et + "," + +btotal);
+                            //editor.putString(Config.NAME_SHARED_PREF, email);
+
+                            //Saving values to editor
+                            editor.commit();
+
+                            SharedPreferences sharedPreferences2 = getSharedPreferences("shared_pref", Context.MODE_PRIVATE);
+
+                            if (sharedPreferences2.contains("balance")) {
+                                rest = (sharedPreferences2).getString("balance", "");
+                            }
+                            if (!sharedPreferences2.contains("balance")) {
+                                rest = "0000-00-00,0,0,0";
+                            }
+                            if (rest.equals("")) {
+                                rest = "0000-00-00,0,0,0";
+                            }
+                            String[] results = rest.split(",");
+                            dd = results[0];
+                            incinc = results[1];
+                            ii = Integer.parseInt(incinc);
+                            expexp = results[2];
+                            ee = Integer.parseInt(expexp);
+                            balbal = results[3];
+                            bb = Integer.parseInt(balbal);
+
+                            int itotal1 = ii + aa;
+                            int btotal1 = itotal1 - ee;
+                            //Toast.makeText(this, "" + itotal + " " + ee + " " + btotal, Toast.LENGTH_SHORT).show();
+
+                            String it1 = String.valueOf(itotal1);
+                            String bt1 = String.valueOf(btotal1);
+                            String et1 = String.valueOf(ee);
+                            //dbState.addBalance(new Balance(row[1], amt, "0", bt1));
+                            SharedPreferences sharedPreferences1 = getSharedPreferences("shared_pref", Context.MODE_PRIVATE);
+
+                            //Creating editor to store values to shared preferences
+                            SharedPreferences.Editor editor1 = sharedPreferences1.edit();
+
+                            //Adding values to editor
+                            editor1.putBoolean("mybalance", true);
+                            editor1.putString("balance", row[1] + "," + itotal1 + "," + et1 + "," + +btotal1);
+                            //editor.putString(Config.NAME_SHARED_PREF, email);
+
+                            //Saving values to editor
+                            editor.commit();
+                        }
+                        if (st.equals("2")) {
+                            int etotal = ee + aa;
+                            int btotal = ii - etotal;
+                            //Toast.makeText(this, "" + ii + " " + etotal + " " + btotal, Toast.LENGTH_SHORT).show();
+
+                            String it = String.valueOf(ii);
+                            String bt = String.valueOf(btotal);
+                            String et = String.valueOf(etotal);
+                            dbState.addBalance(new Balance(row[1], "0", amt, bt));
+                            SharedPreferences sharedPreferences = getSharedPreferences("shared_pref", Context.MODE_PRIVATE);
+
+                            //Creating editor to store values to shared preferences
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+
+                            //Adding values to editor
+                            editor.putBoolean("mybalance", true);
+                            editor.putString("balance", row[1] + "," + it + "," + etotal + "," + +btotal);
+                            //editor.putString(Config.NAME_SHARED_PREF, email);
+
+                            //Saving values to editor
+                            editor.commit();
+
+                            SharedPreferences sharedPreferences2 = getSharedPreferences("shared_pref", Context.MODE_PRIVATE);
+
+                            if (sharedPreferences2.contains("balance")) {
+                                rest = (sharedPreferences2).getString("balance", "");
+                            }
+                            if (!sharedPreferences2.contains("balance")) {
+                                rest = "0000-00-00,0,0,0";
+                            }
+                            if (rest.equals("")) {
+                                rest = "0000-00-00,0,0,0";
+                            }
+                            String[] results = rest.split(",");
+                            dd = results[0];
+                            incinc = results[1];
+                            ii = Integer.parseInt(incinc);
+                            expexp = results[2];
+                            ee = Integer.parseInt(expexp);
+                            balbal = results[3];
+                            bb = Integer.parseInt(balbal);
+
+                            int etotal1 = ee + aa;
+                            int btotal1 = ii - etotal1;
+                            //Toast.makeText(this, "" + ii + " " + etotal + " " + btotal, Toast.LENGTH_SHORT).show();
+
+                            String it1 = String.valueOf(ii);
+                            String bt1 = String.valueOf(btotal1);
+                            String et1 = String.valueOf(etotal1);
+                            //dbState.addBalance(new Balance(row[1], "0", amt, bt1));
+                            SharedPreferences sharedPreferences1 = getSharedPreferences("shared_pref", Context.MODE_PRIVATE);
+
+                            //Creating editor to store values to shared preferences
+                            SharedPreferences.Editor editor1 = sharedPreferences.edit();
+
+                            //Adding values to editor
+                            editor1.putBoolean("mybalance", true);
+                            editor1.putString("balance", row[1] + "," + it1 + "," + etotal1 + "," + +btotal1);
+                            //editor.putString(Config.NAME_SHARED_PREF, email);
+
+                            //Saving values to editor
+                            editor.commit();
+                        }
+                        db.addContacts(new Contact(row[1], row[2], row[3], row[4], row[5], photo));
+                    }
+                    Toast.makeText(getApplicationContext(), "সমস্ত লেনদেন সফলভাবে তালিকাভুক্ত করা হয়েছে", Toast.LENGTH_LONG).show();
+                    csvReader.close();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+
+                //All Borrow Due Import
+                File dir1 = Environment.getExternalStorageDirectory();
+
+                //Toast.makeText(Settings.this, "Borrow Due", Toast.LENGTH_SHORT).show();
+                File filename1 = new File(dir1, "AllDueBalance.csv");
+                String path1 = dir1.getAbsolutePath() + "/AllDueBalance.csv";
+                CSVReader csvReader1 = null;
+                try {
+                    csvReader1 = new CSVReader(new FileReader(path1));
+                    String[] row = null;
+                    int iteration = 0;
+                    while ((row = csvReader1.readNext()) != null) {
+                        if (iteration == 0) {
+                            iteration++;
+                            continue;
+                        }
+                        /*Toast.makeText(Settings.this, row[0]
+                                + "," + row[1]
+                                + "," + row[2]
+                                + "," + row[3]
+                                + "," + row[4]
+                                + "," + row[5]
+                                + "," + row[6], Toast.LENGTH_LONG).show();*/
+                        String img = row[6];
+                        byte[] encodeByte = Base64.decode(img, Base64.DEFAULT);
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0,
+                                encodeByte.length);
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                        photo1 = baos.toByteArray();
+                        //photo1 = img.getBytes();
+                        //Toast.makeText(Settings.this, Arrays.toString(photo) + "", Toast.LENGTH_SHORT).show();
+                        db.addContacts(new Contact(row[1], row[2], row[3], row[4], row[5], photo1));
+                    }
+                    csvReader1.close();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+
+                //All User Account Import
+                File dir2 = Environment.getExternalStorageDirectory();
+
+                //Toast.makeText(Settings.this, "User", Toast.LENGTH_SHORT).show();
+                File filename2 = new File(dir2, "AllUser.csv");
+                String path2 = dir2.getAbsolutePath() + "/AllUser.csv";
+                CSVReader csvReader2 = null;
+                try {
+                    csvReader2 = new CSVReader(new FileReader(path2));
+                    String[] row = null;
+                    int iteration = 0;
+                    while ((row = csvReader2.readNext()) != null) {
+                        if (iteration == 0) {
+                            iteration++;
+                            continue;
+                        }
+                        /*Toast.makeText(Settings.this, row[0]
+                                + "," + row[1]
+                                + "," + row[2]
+                                + "," + row[3]
+                                + "," + row[4]
+                                + "," + row[5]
+                                + "," + row[6], Toast.LENGTH_LONG).show();*/
+                        String img = row[6];
+                        byte[] encodeByte = Base64.decode(img, Base64.DEFAULT);
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0,
+                                encodeByte.length);
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                        photo2 = baos.toByteArray();
+                        //photo2 = img.getBytes();
+                        dbUser.addUser(new Contact(row[1], row[2], row[3], row[4], row[5], photo2));
+                    }
+                    csvReader2.close();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        if (impo.equals("1")) {
+            imp.setClickable(false);
+            imp.setBackgroundResource(R.drawable.inactive_back);
+            imp.setTextColor(Color.parseColor("#5e5e5e"));
+            imp.setText("সংযুক্ত করা আছে");
+        } else {
+            imp.setClickable(true);
+            imp.setBackgroundResource(R.drawable.send_back);
+            imp.setTextColor(Color.parseColor("#ffffff"));
+            imp.setText("সংযুক্ত করুন");
+        }
         //ShowRecords();
     }
 
@@ -288,4 +741,13 @@ public class Settings extends AppCompatActivity {
             return getResources().getConfiguration().locale;
         }
     }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
+    private byte[] profileImage(Bitmap b) {
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        b.compress(Bitmap.CompressFormat.PNG, 0, bos);
+        return bos.toByteArray();
+    }
+
 }

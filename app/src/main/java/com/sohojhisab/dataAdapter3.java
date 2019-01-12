@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -86,7 +87,8 @@ public class dataAdapter3 extends ArrayAdapter<Balance> {
         viewHolder.bal.setText(Html.fromHtml(bal1));
         viewHolder.view = (View) convertView.findViewById(R.id.v);
 
-        if (inc1.equals("0")) {
+        //Toast.makeText(context, inc1, Toast.LENGTH_SHORT).show();
+        if (inc1.equals("০")) {
             viewHolder.view.setBackgroundColor(Color.parseColor("#f11b30"));
         } else {
             viewHolder.view.setBackgroundColor(Color.parseColor("#12d757"));

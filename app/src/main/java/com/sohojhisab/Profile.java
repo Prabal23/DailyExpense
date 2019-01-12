@@ -147,7 +147,7 @@ public class Profile extends AppCompatActivity {
         });
 
         Uri uris = null;
-        uris = Uri.parse("android.resource://com.dailyexpense/drawable/member_icon");
+        uris = Uri.parse("android.resource://com.sohojhisab/drawable/member_icon");
         if (uris != null) {
             bitmap = decodeUri(uris, 100);
         }

@@ -108,6 +108,7 @@
     <LinearLayout
         android:id="@+id/llReminder"
         style="@style/settings_item_layout"
+        android:orientation="vertical"
         android:layout_below="@+id/line">
 
         <TextView
@@ -143,7 +144,8 @@
             style="@style/settings_details"
             android:paddingTop="@dimen/items_top_padding"
             android:paddingBottom="@dimen/items_inbetween_space"
-            android:text="এর মাধ্যমে দেনাপাওনা সম্পর্কিত নোটিফিকেশন প্রেরণ করা হবে" />
+            android:text="এর মাধ্যমে দেনাপাওনা সম্পর্কিত নোটিফিকেশন প্রেরণ করা হবে"
+            android:textColor="#808080" />
 
         <LinearLayout
             android:id="@+id/ll_set_time"
@@ -177,7 +179,8 @@
                 style="@style/settings_details"
                 android:paddingTop="@dimen/items_top_padding"
                 android:paddingBottom="@dimen/items_inbetween_space"
-                android:text="@string/sett_reminder_time_content" />
+                android:text="@string/sett_reminder_time_content"
+                android:textColor="#808080" />
 
             <TextView
                 style="@style/settings_details"
@@ -186,6 +189,95 @@
                 android:text="** আপনি প্রতিদিন এই সময়ে একটি নোটিফিকেশন পাবেন"
                 android:textStyle="bold"
                 android:visibility="gone" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:weightSum="1">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="@dimen/items_inbetween_space">
+
+                    <TextView
+                        style="@style/settings_sub_header"
+                        android:text="ডাটা ব্যাকআপ" />
+
+                </RelativeLayout>
+
+                <TextView
+                    style="@style/settings_details"
+                    android:paddingTop="@dimen/items_top_padding"
+                    android:paddingBottom="@dimen/items_inbetween_space"
+                    android:text="আপনার ডাটাসমূহের ব্যাকআপ সঞ্চয় করুন"
+                    android:textColor="#808080" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/backup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/send_back"
+                android:text="ব্যাকআপ নিন"
+                android:textColor="#ffffff"
+                android:textSize="13dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:weightSum="1">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="@dimen/items_inbetween_space">
+
+                    <TextView
+                        style="@style/settings_sub_header"
+                        android:text="ব্যাকআপ সংযুক্তিকরণ" />
+
+                </RelativeLayout>
+
+                <TextView
+                    style="@style/settings_details"
+                    android:paddingTop="@dimen/items_top_padding"
+                    android:paddingBottom="@dimen/items_inbetween_space"
+                    android:text="আপনার ডাটাসমূহের ব্যাকআপ সংযুক্ত করুন"
+                    android:textColor="#808080" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/imp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="0dp"
+                android:background="@drawable/send_back"
+                android:text="সংযুক্ত করুন"
+                android:textColor="#ffffff"
+                android:textSize="13dp" />
 
         </LinearLayout>
 
@@ -258,7 +350,7 @@
 
             <TextView
                 style="@style/settings_sub_header"
-                android:text="১.১২.১৮" />
+                android:text="২.১.১০" />
 
         </LinearLayout>
 
@@ -289,13 +381,13 @@
             <TextView
                 style="@style/settings_sub_header"
                 android:text="১৫৯ অনাবিল, ধোপাদীঘিরপার, সিলেট।"
-                android:textColor="#5e5e5e"
+                android:textColor="#808080"
                 android:textSize="12dp" />
 
             <TextView
                 style="@style/settings_sub_header"
                 android:text="ফোন : +৮৮ ০১৮৪২ ৪৮৫ ২২২"
-                android:textColor="#5e5e5e"
+                android:textColor="#808080"
                 android:textSize="12dp" />
 
         </LinearLayout>

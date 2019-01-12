@@ -110,7 +110,7 @@ public class Register extends AppCompatActivity {
         });
 
         Uri uris = null;
-        uris = Uri.parse("android.resource://com.dailyexpense/drawable/member_icon");
+        uris = Uri.parse("android.resource://com.sohojhisab/drawable/member_icon");
         if (uris != null) {
             bitmap = decodeUri(uris, 100);
         }
@@ -233,7 +233,7 @@ public class Register extends AppCompatActivity {
             passwrd.setHintTextColor(Color.parseColor("#9e9e9e"));
             passcon.setText("");
             passcon.setHintTextColor(Color.parseColor("#9e9e9e"));
-            Uri uri = Uri.parse("android.resource://com.dailyexpense/drawable/member_icon");
+            Uri uri = Uri.parse("android.resource://com.sohojhisab/drawable/member_icon");
             if (uri != null) {
                 bitmap = decodeUri(uri, 100);
                 dp.setImageBitmap(bitmap);
