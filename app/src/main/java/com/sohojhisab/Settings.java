@@ -1,5 +1,6 @@
 package com.sohojhisab;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Dialog;
@@ -8,6 +9,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -15,10 +17,13 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.view.menu.MenuPopupHelper;
@@ -65,7 +70,7 @@ public class Settings extends AppCompatActivity {
     int ii = 0, ee = 0, bb = 0;
     LocalData localData;
     SwitchCompat reminderSwitch;
-    TextView tvTime;
+    TextView tvTime, email, phone;
     LinearLayout ll_set_time, ll_terms;
     int hour, min, cc = 0;
     ClipboardManager myClipboard;
@@ -77,11 +82,16 @@ public class Settings extends AppCompatActivity {
     final String DATABASE_NAME = "daily_balance";
     String rest = "0000-00-00,0,0,0";
     private byte[] photo, photo1, photo2;
+    static final Integer WRITE_EXST = 0x3;
+    static final Integer READ_EXST = 0x4;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings);
+
+        askForPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, WRITE_EXST);
+        askForPermission(Manifest.permission.READ_EXTERNAL_STORAGE, READ_EXST);
 
         db = new DatabaseHandler(this);
         dbState = new DatabaseHandler1(this);
@@ -297,9 +307,10 @@ public class Settings extends AppCompatActivity {
 
             @Override
             public void onClick(View view) {
+
                 // Income Expense
                 DatabaseHandler dbhelper = new DatabaseHandler(getApplicationContext());
-                File exportDir = new File(Environment.getExternalStorageDirectory(), "");
+                File exportDir = new File(Environment.getExternalStorageDirectory(), "/SohojHisab");
                 if (!exportDir.exists()) {
                     exportDir.mkdirs();
                 }
@@ -333,12 +344,8 @@ public class Settings extends AppCompatActivity {
 
                 // Borrow Due
                 DatabaseHandler dbhelper1 = new DatabaseHandler(getApplicationContext());
-                File exportDir1 = new File(Environment.getExternalStorageDirectory(), "");
-                if (!exportDir1.exists()) {
-                    exportDir1.mkdirs();
-                }
 
-                File file1 = new File(exportDir1, "AllDueBalance.csv");
+                File file1 = new File(exportDir, "AllDueBalance.csv");
                 try {
                     file1.createNewFile();
                     CSVWriter csvWrite1 = new CSVWriter(new FileWriter(file1));
@@ -367,12 +374,8 @@ public class Settings extends AppCompatActivity {
 
                 // All User Account
                 DatabaseHandlerUser dbhelper2 = new DatabaseHandlerUser(getApplicationContext());
-                File exportDir2 = new File(Environment.getExternalStorageDirectory(), "");
-                if (!exportDir2.exists()) {
-                    exportDir2.mkdirs();
-                }
 
-                File file2 = new File(exportDir2, "AllUser.csv");
+                File file2 = new File(exportDir, "AllUser.csv");
                 try {
                     file2.createNewFile();
                     CSVWriter csvWrite2 = new CSVWriter(new FileWriter(file2));
@@ -398,7 +401,9 @@ public class Settings extends AppCompatActivity {
                     Log.e("Settings", sqlEx.getMessage(), sqlEx);
                 }
 
-                File file3 = new File(exportDir2, "AllStatement.csv");
+
+                // All Statement
+                File file3 = new File(exportDir, "AllStatement.csv");
                 try {
                     file3.createNewFile();
                     CSVWriter csvWrite2 = new CSVWriter(new FileWriter(file3));
@@ -421,7 +426,7 @@ public class Settings extends AppCompatActivity {
 
                 //Toast.makeText(Settings.this, "Balance", Toast.LENGTH_SHORT).show();
                 File filename = new File(dir, "AllBalance.csv");
-                String path = dir.getAbsolutePath() + "/AllBalance.csv";
+                String path = dir.getAbsolutePath() + "/SohojHisab/AllBalance.csv";
                 CSVReader csvReader = null;
                 try {
                     csvReader = new CSVReader(new FileReader(path));
@@ -591,13 +596,12 @@ public class Settings extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-
                 //All Borrow Due Import
                 File dir1 = Environment.getExternalStorageDirectory();
 
                 //Toast.makeText(Settings.this, "Borrow Due", Toast.LENGTH_SHORT).show();
                 File filename1 = new File(dir1, "AllDueBalance.csv");
-                String path1 = dir1.getAbsolutePath() + "/AllDueBalance.csv";
+                String path1 = dir1.getAbsolutePath() + "/SohojHisab/AllDueBalance.csv";
                 CSVReader csvReader1 = null;
                 try {
                     csvReader1 = new CSVReader(new FileReader(path1));
@@ -639,7 +643,7 @@ public class Settings extends AppCompatActivity {
 
                 //Toast.makeText(Settings.this, "User", Toast.LENGTH_SHORT).show();
                 File filename2 = new File(dir2, "AllUser.csv");
-                String path2 = dir2.getAbsolutePath() + "/AllUser.csv";
+                String path2 = dir2.getAbsolutePath() + "/SohojHisab/AllUser.csv";
                 CSVReader csvReader2 = null;
                 try {
                     csvReader2 = new CSVReader(new FileReader(path2));
@@ -688,6 +692,58 @@ public class Settings extends AppCompatActivity {
             imp.setText("সংযুক্ত করুন");
         }
         //ShowRecords();
+
+        email = (TextView) findViewById(R.id.email);
+        email.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent testIntent = new Intent(Intent.ACTION_VIEW);
+                Uri data = Uri.parse("mailto:?subject=&body=&to=itlslhelpdesk@gmail.com");
+                testIntent.setData(data);
+                startActivity(testIntent);
+            }
+        });
+
+        phone = (TextView) findViewById(R.id.phone);
+        phone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //dialContactPhone("01842485222");
+            }
+        });
+    }
+
+    private void askForPermission(String permission, Integer requestCode) {
+        if (ContextCompat.checkSelfPermission(Settings.this, permission) != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(Settings.this, permission)) {
+
+                //This is called if user has denied the permission before
+                //In this case I am just asking the permission again
+                ActivityCompat.requestPermissions(Settings.this, new String[]{permission}, requestCode);
+
+            } else {
+
+                ActivityCompat.requestPermissions(Settings.this, new String[]{permission}, requestCode);
+            }
+        } else {
+            //Toast.makeText(this, "" + permission + " is already granted.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (ActivityCompat.checkSelfPermission(this, permissions[0]) == PackageManager.PERMISSION_GRANTED) {
+
+            //Write external Storage
+            //Read External Storage
+        }
+    }
+
+    private void dialContactPhone(final String phoneNumber) {
+        startActivity(new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", phoneNumber, null)));
     }
 
     private void showTimePickerDialog(int h, int m) {

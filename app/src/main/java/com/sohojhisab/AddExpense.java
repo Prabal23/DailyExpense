@@ -52,7 +52,7 @@ public class AddExpense extends AppCompatActivity {
     private ImageView memo_pic;
     LinearLayout take, choose, submit, refresh, cross;
     int mYear, mMonth, mDay;
-    String text = "", exp_date = "", amt = "", srcs = "", desc = "", res = "0000-00-00,0,0,0", dd = "", incinc = "0", expexp = "0", balbal = "0";
+    String text = "", exp_date = "", amt = "0", srcs = "", desc = "", res = "0000-00-00,0,0,0", dd = "", incinc = "0", expexp = "0", balbal = "0";
     private final int requestCode = 20;
     int ii = 0, ee = 0, bb = 0;
     private Contact dataModel, dataModelUser;

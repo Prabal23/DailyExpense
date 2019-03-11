@@ -1,5 +1,6 @@
 package com.sohojhisab;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.Dialog;
@@ -8,6 +9,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
@@ -17,6 +19,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
@@ -55,11 +59,17 @@ public class Login extends AppCompatActivity {
     private byte[] photo, photo1, photo2;
     Bitmap bitmap, bitmap1, bitmap2;
     Dialog dialog;
+    static final Integer WRITE_EXST = 1;
+    static final Integer READ_EXST = 1;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
+
+        /*askForPermission(Manifest.permission.READ_EXTERNAL_STORAGE, 1);
+        askForPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, 1);*/
+        //permissionTake();
 
         db = new DatabaseHandler(this);
         dbState = new DatabaseHandler1(this);
@@ -164,11 +174,66 @@ public class Login extends AppCompatActivity {
 
         err = (TextView) findViewById(R.id.err);
 
+        permissionTake();
+        //backupCheck();
+    }
+
+    public void permissionTake() {
+        if (ContextCompat.checkSelfPermission(Login.this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
+            // Permission is not granted
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(Login.this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+            } else {
+                // No explanation needed; request the permission
+                ActivityCompat.requestPermissions(Login.this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        } else {
+            // Permission has already been granted
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 1: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                    //Toast.makeText(getApplicationContext(), "Permission granted", Toast.LENGTH_SHORT).show();
+                    backupCheck();
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    //Toast.makeText(getApplicationContext(), "Permission denied", Toast.LENGTH_SHORT).show();
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
+
+    public void backupCheck() {
         File dir = Environment.getExternalStorageDirectory();
 
         //Toast.makeText(Settings.this, "Balance", Toast.LENGTH_SHORT).show();
         File filename = new File(dir, "AllBalance.csv");
-        String path = dir.getAbsolutePath() + "/AllBalance.csv";
+        String path = dir.getAbsolutePath() + "/SohojHisab/AllBalance.csv";
         CSVReader csvReader = null;
         try {
             csvReader = new CSVReader(new FileReader(path));
@@ -203,7 +268,7 @@ public class Login extends AppCompatActivity {
 
         //Toast.makeText(Settings.this, "Borrow Due", Toast.LENGTH_SHORT).show();
         File filename1 = new File(dir1, "AllDueBalance.csv");
-        String path1 = dir1.getAbsolutePath() + "/AllDueBalance.csv";
+        String path1 = dir1.getAbsolutePath() + "/SohojHisab/AllDueBalance.csv";
         CSVReader csvReader1 = null;
         try {
             csvReader1 = new CSVReader(new FileReader(path1));
@@ -236,7 +301,7 @@ public class Login extends AppCompatActivity {
 
         //Toast.makeText(Settings.this, "User", Toast.LENGTH_SHORT).show();
         File filename2 = new File(dir2, "AllUser.csv");
-        String path2 = dir2.getAbsolutePath() + "/AllUser.csv";
+        String path2 = dir2.getAbsolutePath() + "/SohojHisab/AllUser.csv";
         CSVReader csvReader2 = null;
         try {
             csvReader2 = new CSVReader(new FileReader(path2));
@@ -286,7 +351,7 @@ public class Login extends AppCompatActivity {
 
                     //Toast.makeText(Settings.this, "Balance", Toast.LENGTH_SHORT).show();
                     File filename = new File(dir, "AllBalance.csv");
-                    String path = dir.getAbsolutePath() + "/AllBalance.csv";
+                    String path = dir.getAbsolutePath() + "/SohojHisab/AllBalance.csv";
                     CSVReader csvReader = null;
                     try {
                         csvReader = new CSVReader(new FileReader(path));
@@ -462,7 +527,7 @@ public class Login extends AppCompatActivity {
 
                     //Toast.makeText(Settings.this, "Borrow Due", Toast.LENGTH_SHORT).show();
                     File filename1 = new File(dir1, "AllDueBalance.csv");
-                    String path1 = dir1.getAbsolutePath() + "/AllDueBalance.csv";
+                    String path1 = dir1.getAbsolutePath() + "/SohojHisab/AllDueBalance.csv";
                     CSVReader csvReader1 = null;
                     try {
                         csvReader1 = new CSVReader(new FileReader(path1));
@@ -508,7 +573,7 @@ public class Login extends AppCompatActivity {
 
                     //Toast.makeText(Settings.this, "User", Toast.LENGTH_SHORT).show();
                     File filename2 = new File(dir2, "AllUser.csv");
-                    String path2 = dir2.getAbsolutePath() + "/AllUser.csv";
+                    String path2 = dir2.getAbsolutePath() + "/SohojHisab/AllUser.csv";
                     CSVReader csvReader2 = null;
                     try {
                         csvReader2 = new CSVReader(new FileReader(path2));

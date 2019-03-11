@@ -1,5 +1,6 @@
 package com.sohojhisab;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.Dialog;
@@ -7,11 +8,14 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.view.menu.MenuPopupHelper;
@@ -42,11 +46,16 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
     private dataAdapter1 data1;
     int exp_sum = 0, inc_sum = 0;
     String res = "//", fname = "", uname = "", password = "";
+    static final Integer WRITE_EXST = 0x3;
+    static final Integer READ_EXST = 0x4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        askForPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, WRITE_EXST);
+        askForPermission(Manifest.permission.READ_EXTERNAL_STORAGE, READ_EXST);
 
         dbUser = new DatabaseHandlerUser(this);
 
@@ -373,6 +382,35 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
 
         /*ShowIncome();
         ShowExpense();*/
+    }
+
+    private void askForPermission(String permission, Integer requestCode) {
+        if (ContextCompat.checkSelfPermission(MainActivity.this, permission) != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, permission)) {
+
+                //This is called if user has denied the permission before
+                //In this case I am just asking the permission again
+                ActivityCompat.requestPermissions(MainActivity.this, new String[]{permission}, requestCode);
+
+            } else {
+
+                ActivityCompat.requestPermissions(MainActivity.this, new String[]{permission}, requestCode);
+            }
+        } else {
+            //Toast.makeText(this, "" + permission + " is already granted.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (ActivityCompat.checkSelfPermission(this, permissions[0]) == PackageManager.PERMISSION_GRANTED) {
+
+            //Write external Storage
+            //Read External Storage
+        }
     }
 
     @Override

@@ -18,6 +18,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.pdf.PdfDocument;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -224,6 +225,15 @@ public class AllBalance extends AppCompatActivity implements View.OnClickListene
 
         init();
         fn_permission();
+
+        Boolean isSDPresent = android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED);
+        Boolean isSDSupportedDevice = Environment.isExternalStorageRemovable();
+
+        if (isSDSupportedDevice && isSDPresent) {
+            //Toast.makeText(this, "Yes", Toast.LENGTH_SHORT).show();
+        } else {
+            //Toast.makeText(this, "No", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void ShowRecords() {
