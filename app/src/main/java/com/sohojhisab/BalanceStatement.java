@@ -78,6 +78,8 @@ public class BalanceStatement extends AppCompatActivity implements View.OnClickL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.balance_statement);
 
+        Toast.makeText(this, "Balance", Toast.LENGTH_SHORT).show();
+
         db = new DatabaseHandler(this);
         db1 = new DatabaseHandler1(this);
         dbUser = new DatabaseHandlerUser(this);
