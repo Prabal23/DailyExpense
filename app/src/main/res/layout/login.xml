@@ -240,6 +240,7 @@
                 android:layout_marginTop="0dp"
                 android:layout_marginBottom="5dp"
                 android:gravity="center"
+                android:visibility="gone"
                 android:orientation="horizontal">
 
                 <TextView
