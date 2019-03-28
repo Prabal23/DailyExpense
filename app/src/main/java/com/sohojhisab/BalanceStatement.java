@@ -65,7 +65,7 @@ import java.util.Calendar;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class BalanceStatement extends AppCompatActivity implements View.OnClickListener{
+public class BalanceStatement extends AppCompatActivity implements View.OnClickListener {
     private DatabaseHandler db;
     private DatabaseHandler1 db1;
     private byte[] photo;
@@ -112,6 +112,15 @@ public class BalanceStatement extends AppCompatActivity implements View.OnClickL
         uname = result1[1];
         //Toast.makeText(this, pass, Toast.LENGTH_SHORT).show();
         password = result1[2];
+
+        init();
+        try {
+            createPdfWrapper();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        }
 
         fontAwesomeFont = Typeface.createFromAsset(getAssets(), "fa-solid-900.ttf");
 
@@ -207,7 +216,6 @@ public class BalanceStatement extends AppCompatActivity implements View.OnClickL
         });
 
         listView = (ListView) findViewById(R.id.list);
-        pdf1 = (LinearLayout)findViewById(R.id.sub);
 
         dp = (CircleImageView) findViewById(R.id.dp);
         dp.setOnClickListener(new View.OnClickListener() {
@@ -341,14 +349,6 @@ public class BalanceStatement extends AppCompatActivity implements View.OnClickL
             }
         });
 
-        init();
-        try {
-            createPdfWrapper();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (DocumentException e) {
-            e.printStackTrace();
-        }
         //fn_permission();
     }
 
@@ -419,7 +419,9 @@ public class BalanceStatement extends AppCompatActivity implements View.OnClickL
 
     private void init() {
         pdf = (TextView) findViewById(R.id.pdf);
-        pdf.setClickable(false);
+        //pdf.setClickable(false);
+        pdf1 = (LinearLayout) findViewById(R.id.sub);
+        pdf.setClickable(true);
         listener();
     }
 
@@ -434,19 +436,29 @@ public class BalanceStatement extends AppCompatActivity implements View.OnClickL
                 if (boolean_save) {
 
                 } else {
+                    File file = saveBitMap(BalanceStatement.this, pdf1);
+                    if (file != null) {
+                        //Toast.makeText(this, "Image saved", Toast.LENGTH_SHORT).show();
+                    } else {
+                        //Toast.makeText(this, "Cannot saved", Toast.LENGTH_SHORT).show();
+                    }
                     if (boolean_permission) {
-                        File file = saveBitMap(BalanceStatement.this, pdf);
-                        if (file != null) {
-                            //Toast.makeText(this, "Image saved", Toast.LENGTH_SHORT).show();
-                        } else {
-                            //Toast.makeText(this, "Cannot saved", Toast.LENGTH_SHORT).show();
-                        }
-                        /*bitmap = loadBitmapFromView(pdf1, pdf1.getWidth(), pdf1.getHeight());
-                        createPdf();
+                        //progres.setVisibility(View.VISIBLE);
+                        //bitmap = loadBitmapFromView(pdf_linear, pdf_linear.getWidth(), pdf_linear.getHeight());
+                        //createPdf();
+                        /*try {
+                            createPdfWrapper();
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        } catch (DocumentException e) {
+                            e.printStackTrace();
+                        }*/
+                        /*progres.setVisibility(View.GONE);
 
-                        String targetPdf = "/sdcard/ব্যালেন্স স্ট্যাটমেন্ট.pdf";
-                        Snackbar snackbar = Snackbar.make(pdf1, "Saved to - " + targetPdf, Snackbar.LENGTH_LONG);
-                                *//*.setAction("View", new View.OnClickListener() {
+                        String targetPdf = "/sdcard/" + fullname + " CV.pdf";
+                        Snackbar snackbar = Snackbar
+                                .make(pdf_linear, "Saved to - " + targetPdf, Snackbar.LENGTH_LONG);
+                                .setAction("View", new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
                                         if (boolean_save) {
@@ -455,7 +467,7 @@ public class BalanceStatement extends AppCompatActivity implements View.OnClickL
                                             startActivity(intent);
                                         }
                                     }
-                                });*//*
+                                });
 
                         snackbar.setActionTextColor(Color.RED);
 
@@ -475,14 +487,14 @@ public class BalanceStatement extends AppCompatActivity implements View.OnClickL
     }
 
     private File saveBitMap(Context context, View drawView) {
-        File pictureFileDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "Sohoj_Hisab_Images");
+        File pictureFileDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "SHImg");
         if (!pictureFileDir.exists()) {
             boolean isDirectoryCreated = pictureFileDir.mkdirs();
             if (!isDirectoryCreated)
                 Log.i("TAG", "ফোল্ডার তৈরি করা যায়নি");
             return null;
         }
-        String filename = pictureFileDir.getPath() + File.separator + "images.jpg";
+        String filename = pictureFileDir.getPath() + File.separator + "balance.jpg";
         File pictureFile = new File(filename);
         Bitmap bitmap = getBitmapFromView(drawView);
         try {
@@ -520,7 +532,6 @@ public class BalanceStatement extends AppCompatActivity implements View.OnClickL
         return returnedBitmap;
     }
 
-
     // used for scanning gallery
     private void scanGallery(Context cntx, String path) {
         try {
@@ -545,7 +556,7 @@ public class BalanceStatement extends AppCompatActivity implements View.OnClickL
             /*PdfWriter.getInstance(doc, new FileOutputStream(directoryPath + "/" + targetPdf));
             doc.open();*/
 
-            String filename = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Pictures/Sohoj_Hisab_Images/Balance.jpg";
+            String filename = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Pictures/SHImg/balance.jpg";
             //Toast.makeText(this, filename, Toast.LENGTH_SHORT).show();
             Image image = Image.getInstance(filename);
             /*float scaler = ((doc.getPageSize().getWidth() - doc.leftMargin() - doc.rightMargin() - 0) / image.getWidth()) * 100; // 0 means you have no indentation. If you have any, change it.
@@ -572,7 +583,7 @@ public class BalanceStatement extends AppCompatActivity implements View.OnClickL
 
             //Toast.makeText(this, "PDF Saved", Toast.LENGTH_SHORT).show();
             String targetPdf1 = "storage/ব্যালেন্স স্ট্যাটমেন্ট.pdf";
-            final Snackbar snackbar = Snackbar.make(pdf, targetPdf1+" এ সংরক্ষণ করা হয়েছে", Snackbar.LENGTH_INDEFINITE);
+            final Snackbar snackbar = Snackbar.make(pdf1, targetPdf1 + " এ সংরক্ষণ করা হয়েছে", Snackbar.LENGTH_INDEFINITE);
             snackbar.setAction("ঠিক আছে", new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -596,35 +607,31 @@ public class BalanceStatement extends AppCompatActivity implements View.OnClickL
         }
     }
 
-    private void createPdfWrapper() throws FileNotFoundException,DocumentException{
+    private void createPdfWrapper() throws FileNotFoundException, DocumentException {
 
         int hasWriteStoragePermission = ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
         if (hasWriteStoragePermission != PackageManager.PERMISSION_GRANTED) {
-
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 if (!shouldShowRequestPermissionRationale(Manifest.permission.WRITE_CONTACTS)) {
-                    showMessageOKCancel("স্টোরেজ পার্মিশনের প্রয়োজন আছে",
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                        requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                                REQUEST_CODE_ASK_PERMISSIONS);
-                                    }
-                                }
-                            });
+                    showMessageOKCancel("অনুগ্রহ করে স্টোরেজ পার্মিশন প্রদাণ করুন", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_ASK_PERMISSIONS);
+                            }
+                        }
+                    });
                     return;
                 }
 
-                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        REQUEST_CODE_ASK_PERMISSIONS);
+                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_ASK_PERMISSIONS);
             }
             return;
-        }else {
+        } else {
             /*File file = saveBitMap(CV.this, pdf_linear);
             if (file != null) {
                 progres.setVisibility(View.GONE);
-                //Toast.makeText(this, "Image saved", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Image saved", Toast.LENGTH_SHORT).show();
             } else {
                 progres.setVisibility(View.GONE);
                 Toast.makeText(this, "Cannot saved", Toast.LENGTH_SHORT).show();
@@ -648,8 +655,7 @@ public class BalanceStatement extends AppCompatActivity implements View.OnClickL
                     }
                 } else {
                     // Permission Denied
-                    Toast.makeText(this, "সটোরেজ পার্মিশন দেওয়া যায়নি", Toast.LENGTH_SHORT)
-                            .show();
+                    Toast.makeText(this, "সটোরেজ পার্মিশন দেওয়ার ক্ষেত্রে সমস্যা দেখা গিয়েছে", Toast.LENGTH_SHORT).show();
                 }
                 break;
             default:
@@ -672,16 +678,16 @@ public class BalanceStatement extends AppCompatActivity implements View.OnClickL
         Display display = wm.getDefaultDisplay();
         DisplayMetrics displaymetrics = new DisplayMetrics();
         this.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-        float hight = displaymetrics.heightPixels;
+        float height = displaymetrics.heightPixels;
         float width = displaymetrics.widthPixels;
 
-        int convertHighet = (int) hight, convertWidth = (int) width;
+        int convertHeight = (int) height, convertWidth = (int) width;
 
 //        Resources mResources = getResources();
 //        Bitmap bitmap = BitmapFactory.decodeResource(mResources, R.drawable.screenshot);
 
         PdfDocument document = new PdfDocument();
-        //PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(convertWidth, convertHighet, 1).create();
+        //PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(convertWidth, convertHeight, 1).create();
         PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(bitmap.getWidth(), bitmap.getHeight(), 2).create();
         PdfDocument.Page page = document.startPage(pageInfo);
 
@@ -724,15 +730,15 @@ public class BalanceStatement extends AppCompatActivity implements View.OnClickL
                 (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
 
             if ((ActivityCompat.shouldShowRequestPermissionRationale(BalanceStatement.this, android.Manifest.permission.READ_EXTERNAL_STORAGE))) {
+
             } else {
-                ActivityCompat.requestPermissions(BalanceStatement.this, new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE},
-                        REQUEST_PERMISSIONS);
+                ActivityCompat.requestPermissions(BalanceStatement.this, new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_PERMISSIONS);
             }
 
             if ((ActivityCompat.shouldShowRequestPermissionRationale(BalanceStatement.this, Manifest.permission.WRITE_EXTERNAL_STORAGE))) {
+
             } else {
-                ActivityCompat.requestPermissions(BalanceStatement.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        REQUEST_PERMISSIONS);
+                ActivityCompat.requestPermissions(BalanceStatement.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSIONS);
             }
         } else {
             boolean_permission = true;

@@ -336,8 +336,7 @@ public class AllBalance extends AppCompatActivity implements View.OnClickListene
                         createPdf();
 
                         String targetPdf = "/sdcard/মোট ব্যালেন্স.pdf";
-                        Snackbar snackbar = Snackbar
-                                .make(listView, "Saved to - " + targetPdf, Snackbar.LENGTH_LONG);
+                        Snackbar snackbar = Snackbar.make(listView, "Saved to - " + targetPdf, Snackbar.LENGTH_LONG);
                                 /*.setAction("View", new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
