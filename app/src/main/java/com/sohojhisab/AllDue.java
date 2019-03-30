@@ -84,7 +84,6 @@ public class AllDue extends AppCompatActivity implements View.OnClickListener {
     LinearLayout pdf1;
     final private int REQUEST_CODE_ASK_PERMISSIONS = 111;
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
